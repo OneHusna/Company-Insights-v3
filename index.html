@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DeepInsight — Company Intelligence Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <nav class="topbar">
+    <div class="topbar-left">
+      <div class="logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+        <span>DeepInsight</span>
+      </div>
+    </div>
+    <div class="topbar-center">
+      <div class="search-container">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="companySearch" placeholder="Search companies, sectors, industries..." autocomplete="off" />
+        <div id="searchDropdown" class="search-dropdown hidden"></div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="pill" id="entityCount"></span>
+    </div>
+  </nav>
+
+  <!-- Landing screen -->
+  <main id="landingScreen" class="landing">
+    <div class="landing-content">
+      <h1>Company Intelligence<br/><span class="gradient-text">at Your Fingertips</span></h1>
+      <p>Search for any company above or filter by sector to unlock deep financial, competitive, and strategic insights.</p>
+      <div class="sector-filters" id="sectorFilters"></div>
+      <div class="featured-companies" id="featuredCompanies"></div>
+    </div>
+  </main>
+
+  <!-- Dashboard (hidden until company selected) -->
+  <main id="dashboard" class="dashboard hidden">
+    <section class="company-header" id="companyHeader"></section>
+    <section class="kpi-row" id="kpiRow"></section>
+
+    <section class="charts-row">
+      <div class="card chart-card">
+        <h3 id="revenueChartTitle">Revenue & Net Income</h3>
+        <canvas id="revenueChart"></canvas>
+      </div>
+      <div class="card chart-card">
+        <h3 id="marginChartTitle">Margin Trends</h3>
+        <canvas id="marginChart"></canvas>
+      </div>
+    </section>
+
+    <section class="charts-row">
+      <div class="card chart-card">
+        <h3 id="segmentChartTitle">Revenue by Segment</h3>
+        <canvas id="segmentChart"></canvas>
+      </div>
+      <div class="card chart-card">
+        <h3>Competitive Comparison</h3>
+        <canvas id="competitiveChart"></canvas>
+      </div>
+    </section>
+
+    <section class="insights-row">
+      <div class="card swot-card" id="swotCard"></div>
+      <div class="card insights-card" id="insightsCard"></div>
+    </section>
+
+    <section class="card" id="leadershipCard"></section>
+
+    <section class="card tech-trends-section" id="techTrendsCard"></section>
+
+    <section class="card" id="solutionOpportunityCard"></section>
+
+  </main>
+
+  <!-- Sales Pitch Modal -->
+  <div id="salesPitchOverlay" class="sp-overlay hidden" onclick="closeSalesPitch(event)">
+    <div class="sp-modal" onclick="event.stopPropagation()">
+      <div class="sp-modal-header">
+        <div class="sp-modal-title-group">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <span>CelcomDigi Sales Pitch</span>
+        </div>
+        <div class="sp-modal-actions">
+          <button class="sp-btn-pdf" onclick="downloadSalesPitchPDF()" title="Download as PDF">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download PDF
+          </button>
+          <button class="sp-btn-copy" onclick="copySalesPitch()" title="Copy to clipboard">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy
+          </button>
+          <button class="sp-btn-close" onclick="closeSalesPitch()" title="Close">&times;</button>
+        </div>
+      </div>
+      <div class="sp-modal-body" id="salesPitchContent"></div>
+    </div>
+  </div>
+
+
+  <script src="data.js"></script>
+  <script src="data-my-1.js"></script>
+  <script src="data-my-2.js"></script>
+  <script src="data-my-3.js"></script>
+  <script src="data-my-4.js"></script>
+  <script src="data-my-5.js"></script>
+  <script src="data-my-6.js"></script>
+  <script src="data-trends-1.js"></script>
+  <script src="data-trends-2.js"></script>
+  <script src="data-trends-3.js"></script>
+  <script src="data-trends-4.js"></script>
+  <script src="data-trends-5.js"></script>
+  <script src="data-leadership.js"></script>
+  <script src="data-pricing-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
